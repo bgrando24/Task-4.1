@@ -14,7 +14,6 @@
         android:layout_gravity="top|center"
         android:layout_marginHorizontal="20dp"
         android:layout_marginStart="153dp"
-        android:layout_marginTop="28dp"
         android:layout_marginEnd="153dp"
         android:layout_marginBottom="28dp"
         android:text="Create New Task"
@@ -35,7 +34,6 @@
         android:layout_marginBottom="60dp"
         android:ems="10"
         android:inputType="text"
-        android:text="Task Title"
         app:layout_constraintBottom_toTopOf="@+id/newTaskDescriptionTextEdit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -48,7 +46,6 @@
         android:layout_height="120dp"
         android:ems="10"
         android:inputType="text"
-        android:text="Task Description"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,13 +71,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="160dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="161dp"
         android:text="Due Date"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toTopOf="@+id/newTaskDueDate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newTaskDescriptionTextEdit" />
 
@@ -95,4 +92,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/newTaskDueDate"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/newTaskDescriptionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:text="Description"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toTopOf="@+id/newTaskDescriptionTextEdit"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/newTaskTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="188dp"
+        android:text="Title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toTopOf="@+id/newTaskTitleTextEdit"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,11 @@
 package com.example.task_41;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +13,6 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -135,6 +131,12 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
         public void onClick(View v) {
             String title = editTaskTitleTextEdit.getText().toString();
             String description = editTaskDescriptionTextEdit.getText().toString();
+
+            // Check if the description is empty
+            if(title.isEmpty()) {
+                displayOverlayMessage(editTaskSubmitButton, "Please enter a title");
+                return;
+            }
 
             long dateToUse;
 //            if the user doesn't change the date, use the original date

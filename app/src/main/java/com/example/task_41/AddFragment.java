@@ -63,7 +63,7 @@ public class AddFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_edit, container, false);
+        View view = inflater.inflate(R.layout.fragment_add, container, false);
 
         // component references
         newTaskTitleTextEdit = view.findViewById(R.id.newTaskTitleTextEdit);
@@ -90,6 +90,12 @@ public class AddFragment extends Fragment {
             public void onClick(View v) {
                 String title = newTaskTitleTextEdit.getText().toString();
                 String description = newTaskDescriptionTextEdit.getText().toString();
+
+                // Check if the description is empty
+                if(title.isEmpty()) {
+                    displayOverlayMessage(submitNewTaskButton, "Please enter a title");
+                    return;
+                }
 
                 long dateToUse;
 //            if the user doesn't change the date, use the original date
