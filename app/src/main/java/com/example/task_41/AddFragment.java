@@ -1,64 +1,120 @@
 package com.example.task_41;
 
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.EditText;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AddFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.android.material.snackbar.Snackbar;
+
+import java.util.Calendar;
+
 public class AddFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String DEBUG_TAG = "AddFragment";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public AddFragment() {
-        // Required empty public constructor
+    /*
+     * Helper function to convert year, month, and day to milliseconds since unix epoch
+     * */
+    private long convertToMillis(int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, dayOfMonth);
+        return calendar.getTimeInMillis();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AddFragment newInstance(String param1, String param2) {
-        AddFragment fragment = new AddFragment();
+    /*
+     * Helper function to display an overlay alerting user of state change
+     * */
+    private void displayOverlayMessage(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    //    component references for use
+    private EditText newTaskTitleTextEdit;
+    private EditText newTaskDescriptionTextEdit;
+    private CalendarView newTaskDueDate;
+    private Button submitNewTaskButton;
+
+    long newDueDate = -1;
+
+    //    DB manager class
+    private DataManager dataManager;
+
+    public static EditFragment newInstance(int id, String title, String description, long dueDate) {
+        EditFragment fragment = new EditFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt("ID", id);
+        args.putString("TITLE", title);
+        args.putString("DESCRIPTION", description);
+        args.putLong("DUE_DATE", dueDate);
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
+    //    apply data from db to list view, as well as handle submitting updated data
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit, container, false);
+
+        // component references
+        newTaskTitleTextEdit = view.findViewById(R.id.newTaskTitleTextEdit);
+        newTaskDescriptionTextEdit = view.findViewById(R.id.newTaskDescriptionTextEdit);
+        newTaskDueDate = view.findViewById(R.id.newTaskDueDate);
+        submitNewTaskButton = view.findViewById(R.id.submitNewTaskButton);
+
+
+        // DB manager instance
+        dataManager = new DataManager(getContext());
+
+//    get the date the user enters into the calendar view
+        newTaskDueDate.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                Log.d(DEBUG_TAG, "onSelectedDayChange: " + year + "/" + month + "/" + dayOfMonth + " -- " + view.getDate());
+                newDueDate = convertToMillis(year, month, dayOfMonth);
+            }
+        });
+
+//    handles updating task data in DB
+        submitNewTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = newTaskTitleTextEdit.getText().toString();
+                String description = newTaskDescriptionTextEdit.getText().toString();
+
+                long dateToUse;
+//            if the user doesn't change the date, use the original date
+                if (newDueDate != -1) {
+                    dateToUse = newDueDate;
+                } else {
+                    dateToUse = getArguments().getLong("DUE_DATE");
+                }
+
+                boolean insertWasSuccessful = dataManager.insertTask(title, description, dateToUse);
+
+                if (insertWasSuccessful) {
+//                navigate back to home
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new HomeFragment()).commit();
+                    displayOverlayMessage(submitNewTaskButton, "Task created!");
+                } else {
+                    // Display error
+                    displayOverlayMessage(submitNewTaskButton, "Error creating task, please try again");
+                }
+            }
+        });
+
+        return view;
     }
+
+
+
 }

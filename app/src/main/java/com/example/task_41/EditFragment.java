@@ -1,10 +1,14 @@
 package com.example.task_41;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +18,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.Calendar;
 
 public class EditFragment extends Fragment {
+
+    private static final String DEBUG_TAG = "EditFragment";
 
     /*
     * Helper function to convert year, month, and day to milliseconds since unix epoch
@@ -27,7 +35,12 @@ public class EditFragment extends Fragment {
         return calendar.getTimeInMillis();
     }
 
-    private static final String TAG = "EditFragment";
+    /*
+     * Helper function to display an overlay alerting user of state change
+     * */
+    private void displayOverlayMessage(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+    }
 
 //    component (and new due date) references for use
     private TextView editTaskHeadingTextView;
@@ -36,6 +49,7 @@ public class EditFragment extends Fragment {
     private EditText editTaskDescriptionTextEdit;
     private CalendarView editTaskDateEdit;
     private Button editTaskSubmitButton;
+    private Button deleteTaskButton;
 
     long newDueDate = -1;
 
@@ -66,6 +80,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
     editTaskDescriptionTextEdit = view.findViewById(R.id.editTaskDescriptionTextEdit);
     editTaskDateEdit = view.findViewById(R.id.editTaskDateEdit);
     editTaskSubmitButton = view.findViewById(R.id.editTaskSubmitButton);
+    deleteTaskButton = view.findViewById(R.id.deleteTaskButton);
 
     // DB manager instance
     dataManager = new DataManager(getContext());
@@ -78,10 +93,22 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
 
         editTaskTitleTextEdit.setText(taskTitle);
         editTaskDescriptionTextEdit.setText(taskDescription);
-        editTaskDateEdit.setDate(taskDueDate);
+//        editTaskDateEdit.setDate(taskDueDate);
+        Log.d(DEBUG_TAG, "Due date from DB: " + taskDueDate);
+
+//        ensure the date is set on the calendar view
+        editTaskDateEdit.post(new Runnable() {
+            @Override
+            public void run() {
+                long taskDueDate = getArguments().getLong("DUE_DATE");
+                editTaskDateEdit.setDate(taskDueDate, false, true);
+            }
+        });
+
     } else {
-        // disable the submit button
+        // disable the buttons
         editTaskSubmitButton.setEnabled(false);
+        deleteTaskButton.setEnabled(false);
 
         // hide the UI components
         editTaskHeadingTextView.setText("No task has been selected! Select a task to edit by tapping on a task on the home screen.");
@@ -97,7 +124,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
     editTaskDateEdit.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
         @Override
         public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-            Log.d(TAG, "onSelectedDayChange: " + year + "/" + month + "/" + dayOfMonth + " -- " + view.getDate());
+            Log.d(DEBUG_TAG, "onSelectedDayChange: " + year + "/" + month + "/" + dayOfMonth + " -- " + view.getDate());
             newDueDate = convertToMillis(year, month, dayOfMonth);
         }
     });
@@ -125,10 +152,29 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
             if (updateWasSuccessful) {
 //                navigate back to home
                 getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new HomeFragment()).commit();
-                Toast.makeText(getContext(), "Task updated!", Toast.LENGTH_SHORT).show();
+                displayOverlayMessage(editTaskSubmitButton, "Task updated!");
             } else {
                 // Display error
-                Toast.makeText(getContext(), "Error updating task", Toast.LENGTH_SHORT).show();
+                displayOverlayMessage(editTaskSubmitButton, "Error updating task, please try again");
+            }
+        }
+    });
+
+
+//    handles deleting task
+    deleteTaskButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int taskId = getArguments().getInt("ID");
+            boolean deleteWasSuccessful = dataManager.deleteTask(taskId);
+
+            if (deleteWasSuccessful) {
+                // navigate back to home
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new HomeFragment()).commit();
+                displayOverlayMessage(deleteTaskButton, "Task deleted!");
+            } else {
+                // Display error
+                displayOverlayMessage(deleteTaskButton, "Error deleting task, please try again");
             }
         }
     });

@@ -9,14 +9,16 @@
 
     <TextView
         android:id="@+id/editTaskHeadingTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top|center"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginStart="153dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="153dp"
         android:layout_marginBottom="28dp"
         android:text="Edit Task"
+        android:textAlignment="center"
         android:textSize="26dp"
         app:layout_constraintBottom_toTopOf="@+id/editTaskTitleTextEdit"
         app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="10dp"
-        android:background="@android:color/holo_red_dark"
+        android:backgroundTint="@android:color/holo_red_dark"
         android:text="Delete Task"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
