@@ -27,7 +27,7 @@ public class TaskCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        // Find fields to populate in inflated template
+        // find fields to populate in inflated template
         TextView tvTitle = view.findViewById(R.id.title);
         TextView tvDescription = view.findViewById(R.id.description);
 //        not currently used but was used in debugging
@@ -35,7 +35,7 @@ public class TaskCursorAdapter extends CursorAdapter {
 //        TextView tvModifiedAt = view.findViewById(R.id.modified_at);
         TextView tvDueDate = view.findViewById(R.id.due_date);
 
-        // Extract properties from cursor
+        // get properties from cursor
         String title = cursor.getString(cursor.getColumnIndexOrThrow("TITLE"));
         String description = cursor.getString(cursor.getColumnIndexOrThrow("DESCRIPTION"));
         long dueDate = cursor.getLong(cursor.getColumnIndexOrThrow("DUE_DATE"));
@@ -44,7 +44,7 @@ public class TaskCursorAdapter extends CursorAdapter {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         String formattedDate = formatter.format(dateToFormat);
 
-        // Populate fields with extracted properties
+        // populate fields with extracted properties
         tvTitle.setText(title);
         tvDescription.setText(description);
         tvDueDate.setText(formattedDate);

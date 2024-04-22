@@ -146,9 +146,7 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 dateToUse = getArguments().getLong("DUE_DATE");
             }
 
-            // Assuming you have a task id to update
             int taskId = getArguments().getInt("ID");
-
             boolean updateWasSuccessful = dataManager.updateTask(taskId, title, description, dateToUse);
 
             if (updateWasSuccessful) {
@@ -180,17 +178,6 @@ public View onCreateView(LayoutInflater inflater, ViewGroup container,
             }
         }
     });
-
-//    set the data from the selected task to the edit text components
-        if (getArguments() != null) {
-            String taskTitle = getArguments().getString("TITLE");
-            String taskDescription = getArguments().getString("DESCRIPTION");
-            long taskDueDate = getArguments().getLong("DUE)_DATE");
-
-            editTaskTitleTextEdit.setText(taskTitle);
-            editTaskDescriptionTextEdit.setText(taskDescription);
-            editTaskDateEdit.setDate(taskDueDate);
-        }
 
         return view;
     }

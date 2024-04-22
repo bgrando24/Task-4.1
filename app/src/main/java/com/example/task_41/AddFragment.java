@@ -48,18 +48,7 @@ public class AddFragment extends Fragment {
     //    DB manager class
     private DataManager dataManager;
 
-    public static EditFragment newInstance(int id, String title, String description, long dueDate) {
-        EditFragment fragment = new EditFragment();
-        Bundle args = new Bundle();
-        args.putInt("ID", id);
-        args.putString("TITLE", title);
-        args.putString("DESCRIPTION", description);
-        args.putLong("DUE_DATE", dueDate);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    //    apply data from db to list view, as well as handle submitting updated data
+    //    handle submitting new task
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,7 +73,7 @@ public class AddFragment extends Fragment {
             }
         });
 
-//    handles updating task data in DB
+//    handles inserting new task to db
         submitNewTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,11 +87,11 @@ public class AddFragment extends Fragment {
                 }
 
                 long dateToUse;
-//            if the user doesn't change the date, use the original date
+//            if the user doesn't change the date, use current date
                 if (newDueDate != -1) {
                     dateToUse = newDueDate;
                 } else {
-                    dateToUse = getArguments().getLong("DUE_DATE");
+                    dateToUse = System.currentTimeMillis();
                 }
 
                 boolean insertWasSuccessful = dataManager.insertTask(title, description, dateToUse);
