@@ -73,7 +73,7 @@ public class AddFragment extends Fragment {
             }
         });
 
-//    handles inserting new task to db
+//    handles inserting new task
         submitNewTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
